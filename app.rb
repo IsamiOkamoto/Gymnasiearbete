@@ -4,7 +4,7 @@ require 'sinatra/reloader'
 require 'sqlite3'
 require 'csv'
 
-$alphabet_count = [0,381,810,1606,1982,2247,2540,2771,3036,3242,3303,3364,3604,3987,4105,4247,4837,4864,5190,5998,6387,6435,6560,6759,6761,6787]
+$alphabet_count = [0,381,810,1606,1982,2247,2540,2771,3036,3242,3303,3364,3604,3987,4105,4247,4837,4864,5190,5998,6387,6435,6560,6759,6761,6787] #Ta bort senare
 $used_words = []
 $words_to_csv = []
 $last_played = ""
@@ -115,4 +115,140 @@ def ai_select_word()
     else 
         return ""
     end
+end
+def similar_length(word)
+    a = which_letter_index(word[0])
+    i1 = $alphabet_count[a]
+    if a == 25
+        i2 == rows()
+    else
+        i2 = $alphabet_count[a + 1]
+    end
+    output = []
+    x = File.readlines("list.csv")
+    while i1 < i2
+        if x[i1].length.chomp == word.length or x[i1].length.chomp == word.length - 1 or x[i1].length.chomp == word.length + 1
+            output.append(x[i1].chomp)
+        end
+        i1 += 1
+    end
+    return output
+end
+def find_word_2(word, arr)
+    i = 0
+    correct = []
+    while i < arr.length
+        correct.append(0)
+        j = 0
+        while j < word.length
+            if arr[i].length == word.length
+                if j == 0
+                    if arr[i][j] == word[j] or arr[i][j] == word[j + 1]
+                        correct[i] += 1
+                    end
+                elsif j == word.length - 1
+                    if arr[i][j] == word[j] or arr[i][j] == word[j - 1]
+                        correct[i] += 1
+                    end
+                else
+                    if arr[i][j] == word[j] or arr[i][j] == word[j + 1] or arr[i][j] == word[j - 1]
+                        correct[i] += 1
+                    end
+                end
+            elsif arr[i].length - 1 == word.length 
+                if j == 0
+                    if arr[i][j] == word[j] or arr[i][j] == word[j + 1]
+                        correct[i] += 1
+                    end
+                elsif j == word.length - 1
+                    if arr[i][j - 1] == word[j]
+                        correct[i] += 1
+                    end
+                else
+                    if arr[i][j] == word[j] or arr[i][j] == word[j + 1] or arr[i][j] == word[j - 1]
+                        correct[i] += 1
+                    end
+                end
+            elsif arr[i].length + 1 == word.length
+                if j == 0
+                    if arr[i][j] == word[j] or arr[i][j] == word[j + 1]
+                        correct[i] += 1
+                    end
+                elsif j == word.length - 1:
+                    if arr[i][j - 1] == word[j] or arr[i][j - 1] == word[j - 1]
+                        correct[i] += 1
+                    end
+                else
+                    if arr[i][j] == word[j] or arr[i][j] == word[j + 1] or arr[i][j] == word[j - 1]
+                        correct[i] += 1
+                    end
+                end
+            end
+            j += 1
+        end
+        i += 1
+    end
+    i = 0
+    output = []
+    while i < correct.length
+        if correct[i]/word.length >= 0.75:
+            output.append(arr[i])
+        end
+        i += 1
+    end
+    return output
+end
+def find_word_v1(word, arr):
+    i = 0
+    correct = []
+    while i < len(arr):
+        correct.append(0)
+        j = 0
+        while j < len(arr[i]):
+            if len(arr[i]) == len(word):
+                if j == 0:
+                    if arr[i][j] == word[j] or arr[i][j + 1] == word[j]:
+                        correct[i] += 1
+                elif j == len(arr[i]) - 1:
+                    if arr[i][j] == word[j] or arr[i][j - 1] == word[j]:
+                        correct[i] += 1
+                else:
+                    if arr[i][j] == word[j] or arr[i][j + 1] == word[j] or arr[i][j - 1] == word[j]:
+                        correct[i] += 1
+            elif len(arr[i]) + 1 == len(word):
+                if j == 0:
+                    if arr[i][j] == word[j] or arr[i][j + 1] == word[j]:
+                        correct[i] += 1
+                elif j == len(arr[i]) - 1:
+                    if arr[i][j] == word[j] or arr[i][j - 1] == word[j]:
+                        correct[i] += 1
+                else:
+                    if arr[i][j] == word[j] or arr[i][j + 1] == word[j] or arr[i][j - 1] == word[j]:
+                        correct[i] += 1
+            elif len(arr[i]) - 1 == len(word):
+                if j == 0:
+                    if arr[i][j] == word[j] or arr[i][j + 1] == word[j]:
+                        correct[i] += 1
+                elif j == len(arr[i]) - 1:
+                    if arr[i][j] == word[j - 1]: #questionable
+                        correct[i] += 1
+                else:
+                    if arr[i][j] == word[j] or arr[i][j + 1] == word[j] or arr[i][j - 1] == word[j]:
+                        correct[i] += 1
+                    end
+                end
+            end
+            j += 1
+        end
+        i += 1
+    end
+    i = 0
+    output = []
+    while i < correct.length
+        if correct[i]/word.length >= 0.75:
+            output.append(arr[i])
+        end
+        i += 1
+    end
+    return output
 end
