@@ -46,7 +46,7 @@ def letters_compare(arr, word_arr) #kolla så output är en float
         end
         i += 1
     end
-    return output/word_arr.length
+    return output/word_arr.length.to_f
 end
 def find_word_v2(word, arr)
     i = 0
@@ -105,7 +105,7 @@ def find_word_v2(word, arr)
     i = 0
     output = []
     while i < correct.length
-        if correct[i]/word.length >= 0.75
+        if correct[i]/word.length.to_f >= 0.75
             output.append(arr[i])
         end
         i += 1
@@ -169,7 +169,7 @@ def find_word_v1(word, arr)
     i = 0
     output = []
     while i < correct.length
-        if correct[i]/word.length >= 0.75
+        if correct[i]/word.length.to_f >= 0.75
             output.append(arr[i])
         end
         i += 1
@@ -238,7 +238,6 @@ def similar_letters(word, arr)
         i += 1
     end
     i = 0
-    p correct
     if word.length >= 4
         while i < correct.length
             if correct[i] >= 0.75
@@ -248,7 +247,6 @@ def similar_letters(word, arr)
         end
     else
         while i < correct.length
-            p correct[i] >= 0.67
             if correct[i] >= 0.66
                 output.append(arr[i])
             end
@@ -305,13 +303,12 @@ def similar_letters_v2(word, arr)
     end
     return output
 end
-def spelling(word)
+def spelling(word) #100% högre prio
     word = word.downcase
     i = similar_length(word)
     arr = find_word_main(word, i)
     output = similar_letters(word, arr)
-    p output
     output = similar_letters_v2(word, output)
     return output
 end
-p spelling("yallow")
+p spelling("rosr")

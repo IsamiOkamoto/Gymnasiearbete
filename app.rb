@@ -127,7 +127,7 @@ def similar_length(word)
     output = []
     x = File.readlines("list.csv")
     while i1 < i2
-        if x[i1].length.chomp == word.length or x[i1].length.chomp == word.length - 1 or x[i1].length.chomp == word.length + 1
+        if x[i1].chomp.length == word.length or x[i1].chomp.length == word.length - 1 or x[i1].chomp.length == word.length + 1
             output.append(x[i1].chomp)
         end
         i1 += 1
@@ -137,7 +137,7 @@ end
 def not_in_array(word, arr)
     i = 0
     while i < arr.length
-        if word == arr[i].length
+        if word == arr[i]
             return false
         end
         i += 1
@@ -153,9 +153,9 @@ def letters_compare(arr, word_arr) #kolla så output är en float
         end
         i += 1
     end
-    return output/word_arr.length
+    return output/word_arr.length.to_f
 end
-def find_word_2(word, arr)
+def find_word_v2(word, arr)
     i = 0
     correct = []
     while i < arr.length
@@ -212,7 +212,7 @@ def find_word_2(word, arr)
     i = 0
     output = []
     while i < correct.length
-        if correct[i]/word.length >= 0.75
+        if correct[i]/word.length.to_f >= 0.75
             output.append(arr[i])
         end
         i += 1
@@ -240,7 +240,7 @@ def find_word_v1(word, arr)
                         correct[i] += 1
                     end
                 end
-            elsif len(arr[i]) + 1 == len(word)
+            elsif arr[i].length + 1 == word.length
                 if j == 0
                     if arr[i][j] == word[j] or arr[i][j + 1] == word[j]
                         correct[i] += 1
@@ -276,7 +276,7 @@ def find_word_v1(word, arr)
     i = 0
     output = []
     while i < correct.length
-        if correct[i]/word.length >= 0.75
+        if correct[i]/word.length.to_f >= 0.75
             output.append(arr[i])
         end
         i += 1
@@ -290,7 +290,7 @@ def find_word_main(word, arr)
     i = 0
     while i < arr1.length
         j = 0
-        while j = arr2.length
+        while j < arr2.length
             if arr1[i] == arr2[j]
                 if not_in_array(arr1[i], priority)
                     priority.append(arr1[i])
@@ -306,7 +306,7 @@ def find_word_main(word, arr)
         arr3 = arr1 + arr2
     end
     i = 0
-    while i arr3.length
+    while i < arr3.length
         if not_in_array(arr3[i], priority)
             priority.append(arr3[i])
         end
@@ -330,7 +330,7 @@ def similar_letters(word, arr)
         arr_letters.append([])
         while j < arr[i].length
             if not_in_array(arr[i][j], arr_letters[i])
-                arr_letters.append(arr[i][j])
+                arr_letters[i].append(arr[i][j])
             end
             j += 1
         end
@@ -339,9 +339,9 @@ def similar_letters(word, arr)
     output = []
     correct = []
     i = 0
-    while i arr.length
+    while i < arr.length #Något här
         correct.append(0)
-        correct[i] = letters_compare(arr_letters[i], etters)
+        correct[i] = letters_compare(arr_letters[i], letters)
         i += 1
     end
     i = 0
@@ -354,7 +354,7 @@ def similar_letters(word, arr)
         end
     else
         while i < correct.length
-            if correct[i] >= 0.67
+            if correct[i] >= 0.66
                 output.append(arr[i])
             end
             i += 1
@@ -410,13 +410,14 @@ def similar_letters_v2(word, arr)
     end
     return output
 end
-def spelling(word)
-    word = word.lowercase
+def spelling(word) #100% högre prio
+    word = word.downcase
     i = similar_length(word)
     arr = find_word_main(word, i)
     output = similar_letters(word, arr)
     output = similar_letters_v2(word, output)
     return output
 end
+p spelling("rosr")
 get(idk) do #shiritori
 #testning
