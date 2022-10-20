@@ -410,7 +410,7 @@ def similar_letters_v2(word, arr)
     end
     return output
 end
-def spelling(word) #100% högre prio
+def spelling(word) #100% högre prio, tre bokstäver
     word = word.downcase
     i = similar_length(word)
     arr = find_word_main(word, i)
@@ -418,6 +418,29 @@ def spelling(word) #100% högre prio
     output = similar_letters_v2(word, output)
     return output
 end
-p spelling("rosr")
-get(idk) do #shiritori
-#testning
+def chose_word_ai()
+
+end
+def start()
+    i = rand(0..25)
+    @last_played = @abc_array[i]
+end
+get("/") do 
+    slim(:input)
+end
+get("/start") do
+    start()
+    redirect("/")
+end
+post("/play") do
+    word = params[:word]
+    valied = valied_word(word)
+    print valied 
+    print @used_words
+    if valied
+        chose_word_ai()
+    else
+        @still_play = 1
+    end
+    redirect("/")
+end
