@@ -423,7 +423,8 @@ def chose_word_ai()
 end
 def start()
     i = rand(0..25)
-    @last_played = @abc_array[i]
+    $last_played = $abc_array[i]
+    p $last_played
 end
 get("/") do 
     slim(:input)
@@ -434,13 +435,14 @@ get("/start") do
 end
 post("/play") do
     word = params[:word]
+    p word
     valied = valied_word(word)
-    print valied 
-    print @used_words
+    p valied 
+    p $used_words
     if valied
         chose_word_ai()
     else
-        @still_play = 1
+        $still_play = 1
     end
     redirect("/")
 end
