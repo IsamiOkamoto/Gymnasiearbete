@@ -48,7 +48,7 @@ def word_exists(input)
     a = which_letter_index(input[0])
     i1 = $alphabet_count[a]
     if a == 25
-        i2 == rows()
+        i2 = rows()
     else
         i2 = $alphabet_count[a + 1]
     end
@@ -461,7 +461,7 @@ get('/correction/:word') do
     redirect('/play')
 end
 post("/play") do
-    $word = params[:word]
+    $word = params[:word].downcase
     valied = valied_word($word)
     if valied
         ai_select_word()
