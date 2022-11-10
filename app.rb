@@ -59,6 +59,10 @@ def word_exists(input)
         end
         i1 += 1
     end
+    $out = spelling($word)
+    if $out.length != 0
+        redirect('/spelling')
+    end
     return false
 end
 def valied_word(input)
@@ -426,23 +430,45 @@ def start()
     $last_played = $abc_array[i]
     p $last_played
 end
-get("/") do 
+get("/play") do 
     slim(:input)
 end
 get("/start") do
+    $used_words = []
     start()
-    redirect("/")
+    redirect("/play")
 end
-post("/play") do
-    word = params[:word]
-    p word
-    valied = valied_word(word)
-    p valied 
-    p $used_words
-    if valied
-        chose_word_ai()
+get('/') do
+    slim(:home)
+end
+get('/lost') do
+    slim(:lost)
+end
+get('/spelling') do
+    $out = spelling($word)
+    slim(:spelling)
+end
+get('/correction/:word') do
+    $newword = params[:word]
+    valied = valied_word($newword)
+    if valied 
+        ai_select_word()
     else
         $still_play = 1
+        $used_words = []
+        redirect('/lost')
     end
-    redirect("/")
+    redirect('/play')
+end
+post("/play") do
+    $word = params[:word]
+    valied = valied_word($word)
+    if valied
+        ai_select_word()
+    else
+        $still_play = 1
+        $used_words = []
+        redirect('/lost')
+    end
+    redirect("/play")
 end

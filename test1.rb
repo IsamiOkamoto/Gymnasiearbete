@@ -59,7 +59,10 @@ def word_exists(input)
         end
         i1 += 1
     end
-    redirect('/spelling')
+    $out = spelling($word)
+    if $out.length != 0
+        redirect('/spelling')
+    end
     return false
 end
 def valied_word(input)
@@ -445,12 +448,21 @@ get('/spelling') do
     $out = spelling($word)
     slim(:spelling)
 end
+get('/correction/:word') do
+    $newword = params[:word]
+    valied = valied_word($newword)
+    if valied 
+        ai_select_word()
+    else
+        $still_play = 1
+        $used_words = []
+        redirect('/lost')
+    end
+    redirect('/play')
+end
 post("/play") do
     $word = params[:word]
-    p $word
     valied = valied_word($word)
-    p valied 
-    p $used_words
     if valied
         ai_select_word()
     else
