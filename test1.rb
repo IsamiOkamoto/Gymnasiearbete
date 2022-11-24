@@ -446,7 +446,7 @@ get('/spelling') do
     $out = spelling($word)
     slim(:spelling)
 end
-get('/correction/:word') do
+post("/spelling") do
     $newword = params[:word]
     valied = valied_word($newword)
     if valied 
@@ -457,7 +457,7 @@ get('/correction/:word') do
         $used_words = []
         redirect('/lost')
     end
-    redirect('/play')
+    redirect('/play') 
 end
 post("/play") do
     p $spell_used

@@ -1,4 +1,7 @@
 h2 #{$out}
-- $out.each do |word|
-    a href="http://localhost:4567/correction/#{word}" #{word} 
-    p
+form action="spelling" method="post" 
+    select name="word"
+        option value="0" selected="selected" Non of these words
+        - $out.each do |word|
+            option value="#{word}" #{word}
+        input type="submit" value="Enter"

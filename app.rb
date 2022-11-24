@@ -3,6 +3,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sqlite3'
 require 'csv'
+enable :sessions
 
 $alphabet_count = [0,381,810,1606,1982,2247,2540,2771,3036,3242,3303,3364,3604,3987,4105,4247,4837,4864,5190,5998,6387,6435,6560,6759,6761,6787] #Ta bort senare
 $used_words = []
