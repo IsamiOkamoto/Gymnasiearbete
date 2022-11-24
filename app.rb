@@ -11,6 +11,7 @@ $words_to_csv = []
 $last_played = ""
 $still_play = 0
 $spell = ""
+$spell_used = []
 $abc_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 def reader(place)
     x = File.readlines("list.csv")
@@ -423,9 +424,6 @@ def spelling(word) #100% högre prio, tre bokstäver
     output = similar_letters_v2(word, output)
     return output
 end
-def chose_word_ai()
-
-end
 def start()
     i = rand(0..25)
     $last_played = $abc_array[i]
@@ -449,26 +447,29 @@ get('/spelling') do
     $out = spelling($word)
     slim(:spelling)
 end
-get('/correction/:word') do
+post("/spelling") do
     $newword = params[:word]
     valied = valied_word($newword)
     if valied 
+        $spell_used.append($newword)
         ai_select_word()
     else
         $still_play = 1
         $used_words = []
         redirect('/lost')
     end
-    redirect('/play')
+    redirect('/play') 
 end
 post("/play") do
-    $word = params[:word].downcase
+    $word = params[:word].downcase #Snyggare med stor bokstav?
     valied = valied_word($word)
     if valied
+        $spell_used.append(nil)
         ai_select_word()
     else
         $still_play = 1
-        $used_words = []
+        $used_words = [] #remove
+        $spell_used = []
         redirect('/lost')
     end
     redirect("/play")
