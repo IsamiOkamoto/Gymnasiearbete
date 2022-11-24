@@ -465,12 +465,12 @@ post("/play") do
     sessions[:worrd] = params[:word].downcase #Snyggare med stor bokstav?
     sessions[:valied] = valied_word(sessions[:worrd])
     if sessions[:valied]
-        $spell_used.append(nil)
+        sessions[:spell_used].append(nil) #$spell_used
         ai_select_word()
     else
-        $still_play = 1
-        $used_words = [] #remove
-        $spell_used = []
+        sessions[:still_play] = 1 #$still_play
+        sessions[:used_words] = [] #$used_words #remove/send to data
+        sessions[:spell_used] = [] #spell_used
         redirect('/lost')
     end
     redirect("/play")
