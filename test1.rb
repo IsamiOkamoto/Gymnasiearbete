@@ -6,12 +6,6 @@ require 'csv'
 enable :sessions
 
 $alphabet_count = [0,381,810,1606,1982,2247,2540,2771,3036,3242,3303,3364,3604,3987,4105,4247,4837,4864,5190,5998,6387,6435,6560,6759,6761,6787] #Ta bort senare
-$used_words = []
-$words_to_csv = []
-$last_played = ""
-$still_play = 0
-$spell = ""
-$spell_used = []
 $abc_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 def reader(place)
     x = File.readlines("list.csv")
@@ -23,8 +17,8 @@ def rows()
 end
 def is_used(word)
     i = 0
-    while i <$used_words.length
-        if $used_words[i] == word
+    while i <session[:used_words].length
+        if session[:used_words][i] == word
             return false
         end
         i += 1
@@ -32,7 +26,7 @@ def is_used(word)
     return true
 end
 def last_word(input)
-    if input[0] == $last_played[$last_played.length - 1]
+    if input[0] == session[:last_played][session[:last_played].length - 1]
         return true
     end
     return false
@@ -61,19 +55,19 @@ def word_exists(input)
         end
         i1 += 1
     end
-    $out = spelling($word)
-    if $out.length != 0
+    session[:out] = spelling(session[:word])
+    if session[:out].length != 0
         redirect('/spelling')
     end
     return false
 end
 def valied_word(input)
     if last_word(input) && is_used(input) && word_exists(input)
-        $used_words.append(input)
-        $last_played = input
+        session[:used_words].append(input)
+        session[:last_played] = input
         return true
     else
-        $still_play = 1
+        session[:still_play] = 1
         return false
     end
 end
@@ -88,12 +82,12 @@ def ai_lose(a)
     hold = i2 - i1
     i = 0
     n = 0
-    while i < $used_words.length
-        if $used_words[i][0] == a1
+    while i < session[:used_words].length
+        if session[:used_words][i][0] == a1
             n += 1
         end
         if n == hold
-            $still_play = 2
+            session[:still_play] = 2
             return false
         end
         i += 1
@@ -101,7 +95,7 @@ def ai_lose(a)
     return true
 end
 def ai_select_word()
-    a = which_letter_index($last_played[$last_played.length - 1])
+    a = which_letter_index(session[:last_played][session[:last_played].length - 1])
     if ai_lose(a)
         i1 = $alphabet_count[a]
         if a == 25
@@ -417,23 +411,30 @@ def similar_letters_v2(word, arr)
     return output
 end
 def spelling(word) #100% högre prio, tre bokstäver
-    word = word.downcase
-    i = similar_length(word)
-    arr = find_word_main(word, i)
-    output = similar_letters(word, arr)
-    output = similar_letters_v2(word, output)
-    return output
+    session[:words] = word
+    session[:output] = []
+    session[:words] = session[:words].downcase
+    session[:ii] = similar_length(session[:words])
+    session[:arr] = find_word_main(session[:words], session[:ii])
+    session[:output] = similar_letters(session[:words], session[:arr])
+    session[:output] = similar_letters_v2(session[:words], session[:output])
+    return session[:output]
 end
 def start()
     i = rand(0..25)
-    $last_played = $abc_array[i]
-    p $last_played
+    session[:last_played] = $abc_array[i]
+    p session[:last_played]
 end
 get("/play") do 
     slim(:input)
 end
 get("/start") do
-    $used_words = []
+    session[:used_words] = []
+    session[:words_to_csv] = []
+    session[:last_played] = ""
+    session[:still_play] = 0
+    session[:spell] = ""
+    session[:spell_used] = []
     start()
     redirect("/play")
 end
@@ -444,34 +445,35 @@ get('/lost') do
     slim(:lost)
 end
 get('/spelling') do
-    $out = spelling($word)
+    session[:out] = spelling(session[:worrd])
     slim(:spelling)
 end
 post("/spelling") do
-    $newword = params[:word]
-    valied = valied_word($newword)
-    if valied 
-        $spell_used.append($newword)
+    session[:newword] = session[:worrd]
+    session[:valied]  = valied_word(session[:newword])
+    if session[:valied] 
+        session[:spell_used].append(session[:newword]) #$spell_used
         ai_select_word()
     else
-        $still_play = 1
-        $used_words = []
+        session[:still_play] = 1 #$still_play
+        session[:used_words] = [] #$used_words
         redirect('/lost')
     end
     redirect('/play') 
 end
 post("/play") do
-    p $spell_used
-    sessions[:worrd] = params[:word].downcase #Snyggare med stor bokstav?
-    sessions[:valied] = valied_word(sessions[:worrd])
-    if sessions[:valied]
-        sessions[:spell_used].append(nil) #$spell_used
+    p session[:spell_used]
+    session[:worrd] = params[:word].downcase #Snyggare med stor bokstav?
+    session[:valied] = valied_word(session[:worrd])
+    if session[:valied]
+        session[:spell_used].append(nil) #$spell_used
         ai_select_word()
     else
-        sessions[:still_play] = 1 #$still_play
-        sessions[:used_words] = [] #$used_words #remove/send to data
-        sessions[:spell_used] = [] #spell_used
+        session[:still_play] = 1 #$still_play
+        session[:used_words] = [] #$used_words #remove/send to data
+        session[:spell_used] = [] #spell_used
         redirect('/lost')
     end
     redirect("/play")
 end
+#spelling error downcase on nil?
