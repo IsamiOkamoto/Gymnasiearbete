@@ -57,6 +57,8 @@ def word_exists(input)
     end
     session[:out] = spelling(session[:word])
     if session[:out].length != 0
+        p "valied"
+        p sessions[:worrd]
         redirect('/spelling')
     end
     return false
@@ -411,9 +413,10 @@ def similar_letters_v2(word, arr)
     return output
 end
 def spelling(word) #100% högre prio, tre bokstäver
+    #p word
+    word = word.downcase
     session[:words] = word
     session[:output] = []
-    session[:words] = session[:words].downcase
     session[:ii] = similar_length(session[:words])
     session[:arr] = find_word_main(session[:words], session[:ii])
     session[:output] = similar_letters(session[:words], session[:arr])
@@ -423,7 +426,7 @@ end
 def start()
     i = rand(0..25)
     session[:last_played] = $abc_array[i]
-    p session[:last_played]
+    #p session[:last_played]
 end
 get("/play") do 
     slim(:input)
@@ -445,6 +448,7 @@ get('/lost') do
     slim(:lost)
 end
 get('/spelling') do
+    p session[:worrd]
     session[:out] = spelling(session[:worrd])
     slim(:spelling)
 end
@@ -462,7 +466,8 @@ post("/spelling") do
     redirect('/play') 
 end
 post("/play") do
-    p session[:spell_used]
+    #p session[:spell_used]
+    #p params[:word]
     session[:worrd] = params[:word].downcase #Snyggare med stor bokstav?
     session[:valied] = valied_word(session[:worrd])
     if session[:valied]
