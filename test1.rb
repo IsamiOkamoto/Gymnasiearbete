@@ -55,10 +55,8 @@ def word_exists(input)
         end
         i1 += 1
     end
-    session[:out] = spelling(session[:word])
+    session[:out] = spelling(input)
     if session[:out].length != 0
-        p "valied"
-        p sessions[:worrd]
         redirect('/spelling')
     end
     return false
@@ -448,12 +446,11 @@ get('/lost') do
     slim(:lost)
 end
 get('/spelling') do
-    p session[:worrd]
     session[:out] = spelling(session[:worrd])
     slim(:spelling)
 end
 post("/spelling") do
-    session[:newword] = session[:worrd]
+    session[:newword] = params[:word]
     session[:valied]  = valied_word(session[:newword])
     if session[:valied] 
         session[:spell_used].append(session[:newword]) #$spell_used
@@ -465,7 +462,7 @@ post("/spelling") do
     end
     redirect('/play') 
 end
-post("/play") do
+post("/playy") do
     #p session[:spell_used]
     #p params[:word]
     session[:worrd] = params[:word].downcase #Snyggare med stor bokstav?
