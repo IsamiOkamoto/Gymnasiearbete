@@ -7,10 +7,6 @@ enable :sessions
 
 $alphabet_count = [0,381,810,1606,1982,2247,2540,2771,3036,3242,3303,3364,3604,3987,4105,4247,4837,4864,5190,5998,6387,6435,6560,6759,6761,6787] #Ta bort senare
 $abc_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-def reader(place)
-    x = File.readlines("list.csv")
-    return x[place].chomp
-end
 def rows()
     x = File.readlines("list.csv")
     return x.length
@@ -499,4 +495,4 @@ post("/playy") do
     end
     redirect("/play")
 end
-#spelling error downcase on nil?
+#ai_lose, word_exists ändra med db
