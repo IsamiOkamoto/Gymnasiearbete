@@ -5,11 +5,10 @@ require 'sqlite3'
 require 'csv'
 enable :sessions
 
-$alphabet_count = [0,381,810,1606,1982,2247,2540,2771,3036,3242,3303,3364,3604,3987,4105,4247,4837,4864,5190,5998,6387,6435,6560,6759,6761,6787] #Ta bort senare
 $abc_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 def rows()
-    x = File.readlines("list.csv")
-    return x.length
+    db = SQLite3::Database.new("db/data.db")
+    return db.execute("SELECT * FROM Words").length
 end
 def is_used(word)
     i = 0
@@ -39,19 +38,10 @@ def which_letter_index(letter)
     end
 end
 def word_exists(input)
-    a = which_letter_index(input[0])
-    i1 = $alphabet_count[a]
-    if a == 25
-        i2 = rows()
-    else
-        i2 = $alphabet_count[a + 1]
-    end
-    x = File.readlines("list.csv")
-    while i1 < i2
-        if input == x[i1].downcase.chomp
-            return true
-        end
-        i1 += 1
+    db = SQLite3::Database.new("db/data.db")
+    arr = db.execute("SELECT * FROM Words WHERE word = ?", input)
+    if arr.length == 1
+        return true
     end
     session[:out] = spelling(input)
     if session[:out].length != 0
@@ -70,18 +60,13 @@ def valied_word(input)
     end
 end
 def ai_lose(a)
-    a1 = which_letter_index(a)
-    i1 = $alphabet_count[a]
-    if a == 25
-        i2 == rows()
-    else
-        i2 = $alphabet_count[a + 1]
-    end
-    hold = i2 - i1
+    db = SQLite3::Database.new("db/data.db")
+    arr = db.execute("SELECT * FROM Words WHERE word LIKE '#{a}%'")
+    hold = arr.length
     i = 0
     n = 0
     while i < session[:used_words].length
-        if session[:used_words][i][0] == a1
+        if session[:used_words][i][0] == a
             n += 1
         end
         if n == hold
@@ -93,18 +78,14 @@ def ai_lose(a)
     return true
 end
 def ai_select_word()
-    a = which_letter_index(session[:last_played][session[:last_played].length - 1])
+    a = session[:last_played][session[:last_played].length - 1]
     if ai_lose(a)
-        i1 = $alphabet_count[a]
-        if a == 25
-            i2 == rows()
-        else
-            i2 = $alphabet_count[a + 1]
-        end
         i = 0
-        x = File.readlines("list.csv")
+        db = SQLite3::Database.new("db/data.db")
+        arr = db.execute("SELECT * FROM Words WHERE word LIKE '#{a}%'")
         while i < 1
-            word = x[rand(i1..i2)].chomp
+            p arr[rand(0..arr.length)][0]
+            word = arr[rand(0..arr.length)][0].chomp #[0] on nil?
             if valied_word(word)
                 i += 1
             end
@@ -115,20 +96,14 @@ def ai_select_word()
     end
 end
 def similar_length(word)
-    a = which_letter_index(word[0])
-    i1 = $alphabet_count[a]
-    if a == 25
-        i2 == rows()
-    else
-        i2 = $alphabet_count[a + 1]
-    end
+    a = word[0]
+    db = SQLite3::Database.new("db/data.db")
+    arr = db.execute("SELECT * FROM Words WHERE word LIKE '#{a}%'")
     output = []
-    x = File.readlines("list.csv")
-    while i1 < i2
-        if x[i1].chomp.length == word.length or x[i1].chomp.length == word.length - 1 or x[i1].chomp.length == word.length + 1
-            output.append(x[i1].chomp)
+    arr.each do |thing|
+        if thing[0].chomp.length == word.length or thing[0].chomp.length == word.length - 1 or thing[0].chomp.length == word.length + 1
+            output.append(thing[0].chomp)
         end
-        i1 += 1
     end
     return output
 end
@@ -425,7 +400,12 @@ def start()
     #p session[:last_played]
 end
 def send_to_db()
-
+    p session[:used_words]
+    p session[:used_words].join(",")
+    p session[:spell_used]
+    p session[:spell_used].join(",")
+    db = SQLite3::Database.new("db/data.db")
+    db.execute("INSERT INTO rounds (Used_words, Spelling, How_end, Player) VALUES(?,?,?,?)", session[:used_words].join(","), session[:spell_used].join(","), session[:still_play], session[:name])
 end
 get("/play") do 
     slim(:input)
@@ -438,7 +418,6 @@ get("/start") do
     session[:words_to_csv] = []
     session[:last_played] = ""
     session[:still_play] = 0
-    session[:spell] = ""
     session[:spell_used] = []
     start()
     redirect("/play")
@@ -455,6 +434,8 @@ get('/') do
 end
 get('/lost') do
     send_to_db()
+    session[:used_words] = [] 
+    session[:spell_used] = []
     slim(:lost)
 end
 get('/spelling') do
@@ -469,30 +450,24 @@ post("/spelling") do
     else
         session[:valied]  = valied_word(session[:newword])
         if session[:valied] 
-            session[:spell_used].append(session[:newword]) #$spell_used
+            session[:spell_used].append(session[:newword])
             ai_select_word()
         else
-            #session[:still_play] = 1 #$still_play
-            session[:used_words] = [] #$used_words
+            session[:used_words] = [] 
             redirect('/lost')
         end
         redirect('/play')
     end 
 end
 post("/playy") do
-    #p session[:spell_used]
-    #p params[:word]
     session[:worrd] = params[:word].downcase #Snyggare med stor bokstav?
     session[:valied] = valied_word(session[:worrd])
     if session[:valied]
-        session[:spell_used].append(nil) #$spell_used
+        session[:spell_used].append(nil)
         ai_select_word()
-    else
-        #session[:still_play] = 1 #$still_play
-        session[:used_words] = [] #$used_words #remove/send to data
-        session[:spell_used] = [] #spell_used
+    else 
         redirect('/lost')
     end
     redirect("/play")
 end
-#ai_lose, word_exists ändra med db
+#ai_lose är inte testad
