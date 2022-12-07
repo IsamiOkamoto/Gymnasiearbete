@@ -1,5 +1,6 @@
-h2 Last word was #{session[:last_played]}
-form action="playy" method="post" 
-    input type="text" name="word" placeholder="Type here"
-    input type="submit" value="Enter"
-h2 History: #{session[:used_words]}
+div.div_input        
+    section.section_input 
+        h2.h2_input Last word was: #{session[:last_played].upcase}
+        form.form_input action="playy" method="post" 
+            input.text_input type="text" name="word" placeholder="Type here"
+            input.submit_input type="submit" value="Enter"

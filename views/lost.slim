@@ -1,11 +1,14 @@
-- if session[:still_play] == 1 or 2 or 3
-    h2 You lost!
-    - if session[:still_play] == 1
-        h3 You lost since the first letter of your word did not match the last letter of the latest word.
-    - elsif session[:still_play] == 2
-        h3 You lost since the word you tried to use has already been used.
-    - elsif session[:still_play] == 3
-        h3 You lost since the word you tried to use does not exist in our database of words.
-- else 
-    h2 You win!
-a href="/" Return home
+div.div_input
+        - if session[:still_play] == 1 or 2 or 3
+            h2.h2_lost You lost! 
+            a href="/"
+                section.section_lost
+                    - if session[:still_play] == 1
+                        h3.h3_lost You lost since the first letter of your word did not match the last letter of the latest word.
+                    - elsif session[:still_play] == 2
+                        h3.h3_lost You lost since the word you tried to use has already been used.
+                    - elsif session[:still_play] == 3
+                        h3.h3_lost You lost since the word you tried to use does not exist in our database of words.
+        - else 
+            h2.h2_lost You win!
+            p Somehow

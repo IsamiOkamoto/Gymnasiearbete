@@ -1,7 +1,9 @@
-h2 #{session[:out]}
-form action="spelling" method="post" 
-    select name="word"
-        option value="0" selected="selected" Non of these words
-        - session[:out].each do |word|
-            option value="#{word}" #{word}
-        input type="submit" value="Enter"
+div.div_spelling
+    section.section_spelling
+        h2.h2_spelling Sorry it seems that the word you typed does not exist according to our list of all words. However we found some similar words: <u>#{session[:print]}</u> If any of these words were the word you ment to type but you were stupid enough to not be able to spell the word, please select the word from the dropdown menu below. If not please submit the preselected answer.
+        form.form_spelling action="spelling" method="post" 
+            select.select_spelling name="word"
+                option.option_spelling value="0" selected="selected" Non of these words
+                - session[:out].each do |word|
+                    option.option_spelling value="#{word}" #{word.upcase}
+                input.submit_spelling type="submit" value="Enter"

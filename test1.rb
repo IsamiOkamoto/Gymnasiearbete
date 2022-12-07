@@ -84,7 +84,6 @@ def ai_select_word()
         db = SQLite3::Database.new("db/data.db")
         arr = db.execute("SELECT * FROM Words WHERE word LIKE '#{a}%'")
         while i < 1
-            p arr[rand(0..arr.length)][0]
             word = arr[rand(0..arr.length)][0].chomp #[0] on nil?
             if valied_word(word)
                 i += 1
@@ -384,7 +383,6 @@ def similar_letters_v2(word, arr)
     return output
 end
 def spelling(word) #100% högre prio, tre bokstäver
-    p word
     word = word.downcase
     session[:words] = word
     session[:output] = []
@@ -419,6 +417,7 @@ get("/start") do
     session[:last_played] = ""
     session[:still_play] = 0
     session[:spell_used] = []
+    session[:hold]
     start()
     redirect("/play")
 end
@@ -440,6 +439,11 @@ get('/lost') do
 end
 get('/spelling') do
     session[:out] = spelling(session[:worrd])
+    session[:print] = ""
+    session[:out].each do |hold|
+        session[:print] += hold.upcase + ", "
+    end
+    session[:print][session[:print].length - 2] = "."
     slim(:spelling)
 end
 post("/spelling") do
@@ -469,5 +473,11 @@ post("/playy") do
         redirect('/lost')
     end
     redirect("/play")
+end
+get("/add") do
+    slim(:new_word)
+end
+get("/info") do
+    slim(:info)
 end
 #ai_lose är inte testad
