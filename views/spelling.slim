@@ -6,4 +6,10 @@ div.div_spelling
                 option.option_spelling value="0" selected="selected" Non of these words
                 - session[:out].each do |word|
                     option.option_spelling value="#{word}" #{word.upcase}
-                input.submit_spelling type="submit" value="Enter"
+            input.submit_spelling type="submit" value="Enter"
+    section.section_sadd
+        h2.h2_sadd If none of the words on the left are the word that you intended and you belive that the word you used is missing please add it to our library
+        form.form_sadd action="adding" method="post"
+            select.select_sadd name="add"
+                option.option_sadd value="#{session[:worrd]}" #{session[:worrd]}
+            input.submit_sadd type="submit" value="Add to library"

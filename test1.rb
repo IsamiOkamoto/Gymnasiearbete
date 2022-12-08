@@ -46,6 +46,8 @@ def word_exists(input)
     session[:out] = spelling(input)
     if session[:out].length != 0
         redirect('/spelling')
+    else
+        redirect("/add?")
     end
     session[:still_play] = 3
     return false
@@ -397,6 +399,11 @@ def start()
     session[:last_played] = $abc_array[i]
     #p session[:last_played]
 end
+def add_word_db(word)
+    db = SQLite3::Database.new("db/data.db")
+    #db.execute("INSERT INTO words") #Change db
+    p word
+end
 def send_to_db()
     p session[:used_words]
     p session[:used_words].join(",")
@@ -407,6 +414,9 @@ def send_to_db()
 end
 get("/play") do 
     slim(:input)
+end
+get("/add?") do
+    slim(:add_m)
 end
 get("/start") do
     if session[:name] == nil
@@ -427,6 +437,10 @@ end
 post('/name') do 
     session[:name] = params[:nickn]
     redirect("/start")
+end
+post('/name2') do
+    session[:name] = params[:nickn]
+    redirect("/")
 end
 get('/') do
     slim(:home)
@@ -480,4 +494,16 @@ end
 get("/info") do
     slim(:info)
 end
+get("/name") do
+    slim(:name2)
+end
+post("/adding") do
+    add_word_db(params[:add])
+    redirect("/") #back to play with valied word after adding
+end
+post("/llose") do
+    session[:still_play] = 3
+    redirect('/lost')
+end
 #ai_lose är inte testad
+#change name

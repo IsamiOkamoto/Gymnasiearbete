@@ -1,0 +1,12 @@
+div.div_addm 
+    section.section_addm
+        h2.h2_input If you belive that the word you used is missing from our library please add it, else please press continue.
+        form.form_sadd action="adding" method="post"
+            select.select_sadd name="add"
+                option.option_sadd value="#{session[:worrd]}" #{session[:worrd]}
+            input.submit_sadd type="submit" value="Add to library"
+    section.section_addm
+        form.form_sadd action="llose" method="post"
+            select.select_sadd name="lose"
+                option.option_sadd value="0"  something 
+            input.submit_sadd type="submit" value="Continue"
