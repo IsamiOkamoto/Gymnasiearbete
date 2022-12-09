@@ -214,3 +214,31 @@
     height: 300px;
     border-radius: 4%; 
 }
+.div_info{
+    width: 100vw;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: grey;
+}
+.section_info{
+    width: 90vw;
+    height: 80vh;
+    background-color: black;
+    border-radius: 4%;
+}
+.h2_info{
+    color: white;
+    font-size: 1.6rem;
+    margin: 20px;
+}
+.article_info{
+    color: white;
+    margin: 20px;
+}
+.h3_info{
+    color: white;
+    font-size: 1.2rem;
+    margin: 20px;
+}

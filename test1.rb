@@ -47,7 +47,7 @@ def word_exists(input)
     if session[:out].length != 0
         redirect('/spelling')
     else
-        redirect("/add?")
+        redirect("/addmm")
     end
     session[:still_play] = 3
     return false
@@ -401,8 +401,7 @@ def start()
 end
 def add_word_db(word)
     db = SQLite3::Database.new("db/data.db")
-    #db.execute("INSERT INTO words") #Change db
-    p word
+    db.execute("INSERT INTO words(word) VALUES(?)",word)
 end
 def send_to_db()
     p session[:used_words]
@@ -415,7 +414,7 @@ end
 get("/play") do 
     slim(:input)
 end
-get("/add?") do
+get("/addmm") do
     slim(:add_m)
 end
 get("/start") do
@@ -471,7 +470,6 @@ post("/spelling") do
             session[:spell_used].append(session[:newword])
             ai_select_word()
         else
-            session[:used_words] = [] 
             redirect('/lost')
         end
         redirect('/play')
@@ -499,7 +497,14 @@ get("/name") do
 end
 post("/adding") do
     add_word_db(params[:add])
-    redirect("/") #back to play with valied word after adding
+    session[:valied] = valied_word(params[:add])
+    if session[:valied]
+        session[:spell_used].append(nil)
+        ai_select_word()
+    else 
+        redirect('/lost')
+    end
+    redirect("/play")
 end
 post("/llose") do
     session[:still_play] = 3

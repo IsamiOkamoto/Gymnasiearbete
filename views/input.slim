@@ -1,6 +1,12 @@
 div.div_input        
     section.section_input 
-        h2.h2_input Last word was: #{session[:last_played].upcase}
-        form.form_input action="playy" method="post" 
-            input.text_input type="text" name="word" placeholder="Type here"
-            input.submit_input type="submit" value="Enter"
+        -if session[:used_words].length == 0
+            h2.h2_input The first letter is: #{session[:last_played].upcase}
+            form.form_input action="playy" method="post" 
+                input.text_input type="text" name="word" placeholder="Type here"
+                input.submit_input type="submit" value="Enter"
+        -else
+            h2.h2_input Word from computer: #{session[:last_played].upcase}
+            form.form_input action="playy" method="post" 
+                input.text_input type="text" name="word" placeholder="Type here"
+                input.submit_input type="submit" value="Enter"
