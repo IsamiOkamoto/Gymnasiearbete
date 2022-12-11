@@ -505,3 +505,7 @@ post("/llose") do
     session[:still_play] = 3
     redirect('/lost')
 end
+post("/new_word") do
+    add_word_db(params[:newword])
+    redirect("/")
+end
