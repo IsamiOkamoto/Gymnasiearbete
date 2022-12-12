@@ -46,6 +46,8 @@ def word_exists(input)
     session[:out] = spelling(input)
     if session[:out].length != 0
         redirect('/spelling')
+    else
+        redirect("/addmm")
     end
     session[:still_play] = 3
     return false
@@ -395,18 +397,20 @@ end
 def start()
     i = rand(0..25)
     session[:last_played] = $abc_array[i]
-    #p session[:last_played]
+end
+def add_word_db(word)
+    db = SQLite3::Database.new("db/data.db")
+    db.execute("INSERT INTO words(word, new) VALUES(?, ?)",word, 2)
 end
 def send_to_db()
-    p session[:used_words]
-    p session[:used_words].join(",")
-    p session[:spell_used]
-    p session[:spell_used].join(",")
     db = SQLite3::Database.new("db/data.db")
     db.execute("INSERT INTO rounds (Used_words, Spelling, How_end, Player) VALUES(?,?,?,?)", session[:used_words].join(","), session[:spell_used].join(","), session[:still_play], session[:name])
 end
 get("/play") do 
     slim(:input)
+end
+get("/addmm") do
+    slim(:add_m)
 end
 get("/start") do
     if session[:name] == nil
@@ -427,6 +431,10 @@ end
 post('/name') do 
     session[:name] = params[:nickn]
     redirect("/start")
+end
+post('/name2') do
+    session[:name] = params[:nickn]
+    redirect("/")
 end
 get('/') do
     slim(:home)
@@ -457,7 +465,6 @@ post("/spelling") do
             session[:spell_used].append(session[:newword])
             ai_select_word()
         else
-            session[:used_words] = [] 
             redirect('/lost')
         end
         redirect('/play')
@@ -473,4 +480,32 @@ post("/playy") do
         redirect('/lost')
     end
     redirect("/play")
+end
+get("/add") do
+    slim(:new_word)
+end
+get("/info") do
+    slim(:info)
+end
+get("/name") do
+    slim(:name2)
+end
+post("/adding") do
+    add_word_db(params[:add])
+    session[:valied] = valied_word(params[:add])
+    if session[:valied]
+        session[:spell_used].append(nil)
+        ai_select_word()
+    else 
+        redirect('/lost')
+    end
+    redirect("/play")
+end
+post("/llose") do
+    session[:still_play] = 3
+    redirect('/lost')
+end
+post("/new_word") do
+    add_word_db(params[:newword])
+    redirect("/")
 end
