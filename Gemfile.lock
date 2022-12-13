@@ -16,11 +16,13 @@ GEM
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
     sqlite3 (1.5.4-x64-mingw-ucrt)
+    sqlite3 (1.5.4-x86_64-linux)
     temple (0.8.2)
     tilt (2.0.11)
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   sinatra
