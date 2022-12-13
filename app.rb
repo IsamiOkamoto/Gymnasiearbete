@@ -1,8 +1,6 @@
 require 'slim'
 require 'sinatra'
-require 'sinatra/reloader'
 require 'sqlite3'
-require 'csv'
 enable :sessions
 
 $abc_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -417,11 +415,9 @@ get("/start") do
         redirect('/name')
     end
     session[:used_words] = []
-    session[:words_to_csv] = []
     session[:last_played] = ""
     session[:still_play] = 0
     session[:spell_used] = []
-    session[:hold]
     start()
     redirect("/play")
 end
