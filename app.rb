@@ -384,8 +384,7 @@ def similar_letters_v2(word, arr)
 end
 def spelling(word) #100% högre prio, tre bokstäver
     word = word.downcase
-    session[:words] = word
-    session[:output] = []
+    session[:words] = words
     ii = similar_length(session[:words])
     arr = find_word_main(session[:words], ii)
     output = similar_letters(session[:words], arr)
